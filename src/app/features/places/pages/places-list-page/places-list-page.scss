@@ -1,0 +1,65 @@
+@use '../../../../../styles/tokens' as t;
+.search-hero {
+  position: relative;
+  background: url('/paris.jpg') center 38% / cover;
+  color: var(--surface);
+  isolation: isolate;
+}
+.search-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgb(9 25 25 / 58%);
+  z-index: -1;
+}
+.hero-content {
+  padding-block: var(--space-7);
+}
+.hero-content .eyebrow {
+  color: var(--surface);
+}
+h1 {
+  font-size: 2.25rem;
+  max-width: 32rem;
+}
+.hero-intro {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-5);
+}
+.photo-credit {
+  position: absolute;
+  bottom: var(--space-2);
+  right: var(--space-4);
+  color: var(--surface);
+  font-size: 0.625rem;
+}
+.search-area {
+  padding-block: var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+.results {
+  padding-top: var(--space-6);
+}
+.results-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+.result-count,
+.search-meta {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+.search-meta {
+  margin-bottom: var(--space-5);
+}
+@media (min-width: t.$tablet) {
+  .hero-content {
+    padding-block: var(--space-8);
+  }
+  h1 {
+    font-size: 3rem;
+  }
+}

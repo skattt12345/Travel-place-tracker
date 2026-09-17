@@ -1,0 +1,30 @@
+<article class="place-card">
+  <div class="card-visual" aria-hidden="true">
+    <span>⌖</span><span class="visual-label">Explore somewhere new</span>
+  </div>
+  <div class="card-content">
+    <p class="category">{{ category() }}</p>
+    <h2>{{ place().name ?? 'Name unavailable' }}</h2>
+    <p class="address">{{ place().formattedAddress ?? 'Address unavailable' }}</p>
+    <div class="card-actions">
+      <a
+        class="button button-secondary"
+        [routerLink]="['/places', place().id]"
+        queryParamsHandling="preserve"
+        >View details <span aria-hidden="true">↗</span></a
+      >
+      <button
+        class="wishlist-button button-secondary"
+        type="button"
+        (click)="wishlist.toggle(place())"
+        [attr.aria-pressed]="wishlist.isInWishlist(place().id)"
+        [attr.aria-label]="
+          wishlist.isInWishlist(place().id) ? 'Remove from Wishlist' : 'Add to Wishlist'
+        "
+        [title]="wishlist.isInWishlist(place().id) ? 'Remove from Wishlist' : 'Add to Wishlist'"
+      >
+        <span aria-hidden="true">{{ wishlist.isInWishlist(place().id) ? '♥' : '♡' }}</span>
+      </button>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,108 @@
+<div class="container detail-page">
+  <a class="back-link" routerLink="/places" queryParamsHandling="preserve"
+    ><span aria-hidden="true">← </span>Back to places</a
+  >
+  @switch (state().status) {
+    @case ('loading') {
+      <app-loader />
+    }
+    @case ('error') {
+      <p class="error" role="alert">{{ state().error }}</p>
+    }
+    @case ('invalid-id') {
+      <p role="alert">Invalid or missing place ID. Open a place from the search results.</p>
+    }
+    @case ('not-found') {
+      <p class="state" role="status">
+        Geoapify returned no details for this place. It may still be available in search results.
+      </p>
+    }
+    @case ('success') {
+      @if (state().details; as details) {
+        <div class="detail-overview">
+          <div class="detail-media">
+            @if (details.imageUrl && !imageFailed()) {
+              <img
+                [src]="details.imageUrl"
+                [alt]="details.name ?? 'Place photo'"
+                (error)="imageFailed.set(true)"
+              />
+            } @else {
+              <div class="no-photo">
+                <span aria-hidden="true">⌖</span>
+                <p>No photo available.</p>
+              </div>
+            }
+          </div>
+          <div class="detail-info">
+            <h1>{{ details.name ?? 'Place details' }}</h1>
+            @if (category(); as type) {
+              <p>{{ type }}</p>
+            }
+            @if (details.description) {
+              <h2 class="info-label">About this place</h2>
+              <p>{{ details.description }}</p>
+            }
+            @if (details.formattedAddress) {
+              <h2 class="info-label">Address</h2>
+              <p>{{ details.formattedAddress }}</p>
+            }
+            @if (details.openingHours) {
+              <h2 class="info-label">Opening hours</h2>
+              <p>{{ details.openingHours }}</p>
+            }
+            @if (details.latitude !== null && details.longitude !== null) {
+              <h2 class="info-label">Coordinates</h2>
+              <p>{{ details.latitude }}, {{ details.longitude }}</p>
+            }
+            @if (details.website) {
+              <p>
+                <a [href]="details.website" target="_blank" rel="noopener noreferrer">Website</a>
+              </p>
+            }
+            @if (details.wikipediaUrl) {
+              <p>
+                <a [href]="details.wikipediaUrl" target="_blank" rel="noopener noreferrer"
+                  >Wikipedia</a
+                >
+              </p>
+            }
+            @if (details.wikimediaCommonsUrl) {
+              <p>
+                <a [href]="details.wikimediaCommonsUrl" target="_blank" rel="noopener noreferrer"
+                  >Wikimedia Commons</a
+                >
+              </p>
+            }
+            @if (wishlistPlace(); as place) {
+              <button
+                class="wishlist-button button-secondary"
+                type="button"
+                (click)="wishlist.toggle(place)"
+                [attr.aria-pressed]="wishlist.isInWishlist(place.id)"
+              >
+                {{ wishlist.isInWishlist(place.id) ? 'Remove from Wishlist' : 'Add to Wishlist' }}
+              </button>
+            } @else if (wishlist.isInWishlist(details.id)) {
+              <button type="button" (click)="wishlist.remove(details.id)">
+                Remove from Wishlist
+              </button>
+            }
+          </div>
+        </div>
+        <app-place-feedback [placeId]="details.id" />
+        <p class="attribution">
+          Place data:
+          <a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Geoapify</a>
+          /
+          <a
+            href="https://www.openstreetmap.org/copyright"
+            target="_blank"
+            rel="noopener noreferrer"
+            >OpenStreetMap contributors</a
+          >
+        </p>
+      }
+    }
+  }
+</div>

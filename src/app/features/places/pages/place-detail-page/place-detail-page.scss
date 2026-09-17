@@ -1,0 +1,67 @@
+@use '../../../../../styles/tokens' as t;
+:host {
+  display: block;
+  overflow-wrap: anywhere;
+}
+.detail-page {
+  padding-top: var(--space-5);
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-height);
+  margin-bottom: var(--space-5);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 650;
+}
+.detail-overview {
+  display: grid;
+  gap: var(--space-6);
+}
+.detail-media {
+  background: var(--surface-secondary);
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-width: 0;
+  align-self: start;
+}
+img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 36rem;
+  object-fit: contain;
+}
+.no-photo {
+  display: grid;
+  place-content: center;
+  text-align: center;
+  aspect-ratio: 4 / 3;
+  color: var(--muted);
+}
+.no-photo span {
+  font-size: 4rem;
+  color: var(--primary);
+}
+.detail-info {
+  min-width: 0;
+}
+.detail-info h1 {
+  font-size: 2rem;
+}
+.info-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-block: var(--space-5) var(--space-2);
+}
+.detail-info > p {
+  font-size: 0.9375rem;
+}
+@media (min-width: t.$desktop) {
+  .detail-overview {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: var(--space-7);
+  }
+}

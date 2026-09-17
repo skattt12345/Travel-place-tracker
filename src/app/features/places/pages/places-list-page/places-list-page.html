@@ -1,0 +1,72 @@
+<section class="search-hero">
+  <div class="container hero-content">
+    <p class="eyebrow">A little curiosity. A new destination.</p>
+    <h1>Travel Places Tracker</h1>
+    <p class="hero-intro">Discover remarkable places.<br />Keep the ones that move you.</p>
+  </div>
+  <a
+    class="photo-credit"
+    href="https://commons.wikimedia.org/wiki/File:Tour_Eiffel_Wikimedia_Commons.jpg"
+    target="_blank"
+    rel="noopener noreferrer"
+    >Paris · Benh Lieu Song · CC BY-SA 3.0</a
+  >
+</section>
+<div class="container">
+  <section class="search-area" aria-label="Find places">
+    <app-place-search
+      [initialSearch]="initialSearch()"
+      [loading]="state().status === 'loading'"
+      (searchSubmitted)="search($event)"
+    />
+  </section>
+  <section
+    class="results"
+    aria-label="Search results"
+    [attr.aria-busy]="state().status === 'loading'"
+  >
+    <div class="results-heading">
+      <h2>Places to explore</h2>
+      @if (state().status === 'success') {
+        <span class="result-count" role="status">{{ state().places.length }} places found.</span>
+      }
+    </div>
+    @if (searchDescription()) {
+      <p class="search-meta">{{ searchDescription() }}</p>
+    }
+    @switch (state().status) {
+      @case ('loading') {
+        <app-loader />
+      }
+      @case ('error') {
+        <p class="error" role="alert">{{ state().error }}</p>
+      }
+      @case ('success') {
+        @if (state().places.length === 0) {
+          <div class="state" role="status">
+            <span class="state-symbol" aria-hidden="true">⌖</span>
+            <h3>No places found this time</h3>
+            <p>No matching tourist places found nearby. Try another location or keyword.</p>
+          </div>
+        } @else {
+          <div class="results-grid">
+            @for (place of state().places; track place.id) {
+              <app-place-card [place]="place" />
+            }
+          </div>
+        }
+      }
+      @case ('idle') {
+        <div class="state">
+          <span class="state-symbol" aria-hidden="true">⌖</span>
+          <h3>Where will curiosity take you?</h3>
+          <p>No search results yet.</p>
+        </div>
+      }
+    }
+  </section>
+  <p class="attribution">
+    Place data: <a href="https://www.geoapify.com/">Geoapify</a> /
+    <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>
+  </p>
+</div>

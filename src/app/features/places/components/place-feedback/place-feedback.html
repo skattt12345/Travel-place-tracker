@@ -1,0 +1,72 @@
+<section class="feedback-layout" aria-label="Your local feedback">
+  <div class="rating-section">
+    <fieldset>
+      <legend>Your rating</legend>
+      <div class="stars">
+        @for (rating of ratings; track rating) {
+          <label class="star" [class.selected]="(feedback()?.rating ?? 0) >= rating">
+            <input
+              type="radio"
+              [name]="'rating-' + placeId()"
+              [value]="rating"
+              [checked]="feedback()?.rating === rating"
+              (change)="feedbackService.setRating(placeId(), rating)"
+            />
+            <span class="star-symbol" aria-hidden="true">{{
+              (feedback()?.rating ?? 0) >= rating ? '★' : '☆'
+            }}</span>
+            <span class="sr-only">{{ rating }} / 5</span>
+          </label>
+        }
+      </div>
+    </fieldset>
+    @if (feedback()?.rating; as rating) {
+      <p>Your rating: {{ rating }}/5</p>
+    }
+    <p class="muted">Your feedback is saved locally in this browser.</p>
+  </div>
+  <div class="reviews-section">
+    <h2>Your tips &amp; reviews</h2>
+    <form (submit)="$event.preventDefault(); addReview()">
+      <label
+        >Your tip or review
+        <textarea
+          [formControl]="review"
+          [attr.maxlength]="maxLength"
+          rows="3"
+          placeholder="What made this place memorable?"
+          [attr.aria-invalid]="!!error()"
+          [attr.aria-describedby]="error() ? 'feedback-error' : 'feedback-help'"
+        ></textarea>
+      </label>
+      <div class="form-footer">
+        <span class="help" id="feedback-help">Up to {{ maxLength }} characters</span
+        ><button type="submit">Add</button>
+      </div>
+      @if (error()) {
+        <p id="feedback-error" role="alert">{{ error() }}</p>
+      }
+    </form>
+    <div class="review-list">
+      @for (entry of feedback()?.reviews ?? []; track entry.id) {
+        <article class="review">
+          <p>{{ entry.text }}</p>
+          <div class="review-footer">
+            <time [attr.datetime]="entry.createdAt">{{
+              entry.createdAt | date: 'mediumDate'
+            }}</time>
+            <button
+              class="button-danger"
+              type="button"
+              (click)="feedbackService.removeReview(placeId(), entry.id)"
+            >
+              Remove
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p class="muted">No tips or reviews yet.</p>
+      }
+    </div>
+  </div>
+</section>

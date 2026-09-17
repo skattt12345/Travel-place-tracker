@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="page-heading">
+    <p class="eyebrow">Your next adventures</p>
+    <h1>Wishlist</h1>
+    <p class="muted">{{ wishlist.places().length }} saved places</p>
+  </div>
+  @if (wishlist.places().length) {
+    <div class="results-grid">
+      @for (place of wishlist.places(); track place.id) {
+        <app-place-card [place]="place" />
+      }
+    </div>
+    <a class="button button-secondary browse-link" routerLink="/places">Browse places</a>
+  } @else {
+    <div class="state">
+      <span class="state-symbol" aria-hidden="true">♡</span>
+      <h2>Your wishlist is empty.</h2>
+      <p>Save places you would like to visit.</p>
+      <a class="button" routerLink="/places">Browse places</a>
+    </div>
+  }
+</div>

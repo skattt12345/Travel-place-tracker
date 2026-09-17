@@ -1,0 +1,14 @@
+<header>
+  <div class="container header-inner">
+    <a class="brand" routerLink="/places"
+      ><span class="brand-mark" aria-hidden="true">⌖</span
+      ><span>Travel Places<br /><strong>&#32;Tracker</strong></span></a
+    >
+    <nav aria-label="Main navigation">
+      <a routerLink="/places" routerLinkActive="active" ariaCurrentWhenActive="page">Places</a>
+      <a routerLink="/wishlist" routerLinkActive="active" ariaCurrentWhenActive="page"
+        >Wishlist <span class="count">{{ wishlist.places().length }}</span></a
+      >
+    </nav>
+  </div>
+</header>

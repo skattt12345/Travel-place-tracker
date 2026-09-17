@@ -1,0 +1,26 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <fieldset>
+    <legend class="sr-only">Search places</legend>
+    <label>
+      Keyword
+      <input type="search" formControlName="keyword" placeholder="Museum, castle, park..." />
+    </label>
+    <label>
+      City or location
+      <input
+        type="text"
+        formControlName="location"
+        placeholder="Where do you want to go?"
+        required
+        [attr.aria-invalid]="form.controls.location.touched && form.controls.location.invalid"
+        [attr.aria-describedby]="
+          form.controls.location.touched && form.controls.location.invalid ? 'location-error' : null
+        "
+      />
+    </label>
+    <button type="submit" [disabled]="loading()">Search</button>
+  </fieldset>
+  @if (form.controls.location.touched && form.controls.location.invalid) {
+    <p id="location-error" role="alert">Enter a city or location.</p>
+  }
+</form>
