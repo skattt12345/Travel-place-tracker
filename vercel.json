@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist/travel-places-tracker/browser",
+  "rewrites": [
+    { "source": "/places", "destination": "/index.html" },
+    { "source": "/places/:id", "destination": "/index.html" },
+    { "source": "/wishlist", "destination": "/index.html" }
+  ]
+}

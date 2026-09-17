@@ -28,6 +28,28 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
    If Angular CLI is not on your PATH, use `npx ng serve` or `npm start`.
 
+## Deployment to Vercel
+
+Add `GEOAPIFY_API_KEY` in the Vercel project's Environment Variables for Production
+and for Preview if preview deployments should support search. Supply your own key.
+
+Vercel uses `npm run vercel-build`, as configured in `vercel.json`. This runs
+`scripts/generate-environment.mjs` before the production Angular build. The script
+requires a nonblank `GEOAPIFY_API_KEY` and generates the ignored
+`src/environments/environment.ts` without logging the key. The output directory is
+`dist/travel-places-tracker/browser`.
+
+Run this deployment command only in the deployment checkout: it replaces that
+checkout's environment file. Normal `npm start` and `npm run build` do not run the
+generator and continue using your existing local environment file.
+
+The SPA rewrites serve `index.html` for `/places`, `/places/:id`, and `/wishlist`,
+so refreshing these routes works without rewriting static assets or API paths.
+
+The key stays out of Git, but is embedded in the public browser bundle and visible
+in API requests. Configure Geoapify allowed origins/referrers for your deployment
+domains; a build-time variable does not make a browser API key a server-side secret.
+
 ## Geoapify search configuration
 
 Set `environment.geoapify.apiKey` in `src/environments/environment.ts` to your own key.
