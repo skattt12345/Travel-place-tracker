@@ -1,75 +1,175 @@
 # Travel Places Tracker
 
-A frontend test assignment for discovering tourist places, viewing real place
-details/photos, saving a wishlist, and keeping personal ratings and tips.
+A responsive Angular SPA for discovering tourist places by keyword and location,
+viewing place details, and saving favorite places.
 
-Built with Angular 22 standalone components, TypeScript, SCSS, Angular Signals,
-RxJS, and browser localStorage.
+## Live Demo
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.8.
+[https://travel-place-tracker.vercel.app/places](https://travel-place-tracker.vercel.app/places)
 
-## Setup after cloning
+## Features
 
-1. Copy the example configuration:
+- Search tourist places by keyword and city/location
+- Geoapify Places API integration
+- Place details with address, coordinates, categories, and available metadata
+- Real place images enriched through Wikimedia/Wikidata when available
+- Wishlist persisted in localStorage
+- Local user ratings and tips/reviews persisted in the browser
+- 10-minute search cache to avoid repeated API requests for the same search
+- Search state preserved through URL query parameters
+- Responsive mobile, tablet, and desktop UI
+- Lazy-loaded Angular routes
+- SPA routing compatible with Vercel
+
+## Tech Stack
+
+- Angular 22 with standalone components
+- TypeScript
+- RxJS for HTTP operations
+- Angular Signals for state
+- SCSS
+- Geoapify API
+- Wikimedia / Wikidata
+- localStorage
+- Vercel
+- Git / GitHub
+
+## Architecture
+
+The application is organized by feature under `src/app/`:
+
+- `core/`: shared models, configuration, API access, caching, storage, and image enrichment services.
+- `features/places/`: search, place cards, list and detail pages, and local feedback.
+- `features/wishlist/`: wishlist page and persistent wishlist state.
+- `shared/`: reusable UI components, including the header and loader.
+
+`app.routes.ts` defines lazy-loaded pages; `app.config.ts` configures application providers.
+
+## Getting Started
+
+1. Clone the repository and enter the project directory:
+
+   ```bash
+   git clone https://github.com/skattt12345/Travel-place-tracker.git
+   cd Travel-place-tracker
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Copy the example environment configuration:
 
    ```bash
    cp src/environments/environment.example.ts src/environments/environment.ts
    ```
 
-2. Set `environment.geoapify.apiKey` in `src/environments/environment.ts` to
-   your own Geoapify API key. This local file is ignored by Git; the example
-   configuration contains no key and is committed instead.
-3. Install dependencies and start the application:
+4. Set `environment.geoapify.apiKey` in `src/environments/environment.ts` to your
+   own Geoapify API key. Keep the existing `baseUrl`. The local file is ignored by
+   Git; the committed example contains a blank key. A blank key allows builds,
+   but search requires a valid key.
+
+5. Start the development server:
 
    ```bash
-   npm install
    ng serve
    ```
 
-   If Angular CLI is not on your PATH, use `npx ng serve` or `npm start`.
+   If Angular CLI is not on your PATH, use `npm start` or `npx ng serve`.
+   Open [localhost:4200](http://localhost:4200/). The app reloads as source files change.
 
-## Deployment to Vercel
+Local development reads the environment file, not `GEOAPIFY_API_KEY`. That
+environment variable is used by the deployment build described below.
 
-Add `GEOAPIFY_API_KEY` in the Vercel project's Environment Variables for Production
-and for Preview if preview deployments should support search. Supply your own key.
+## Testing
 
-Vercel uses `npm run vercel-build`, as configured in `vercel.json`. This runs
-`scripts/generate-environment.mjs` before the production Angular build. The script
-requires a nonblank `GEOAPIFY_API_KEY` and generates the ignored
-`src/environments/environment.ts` without logging the key. The output directory is
+Run the application unit tests with Angular's Vitest runner:
+
+```bash
+npm test
+```
+
+For a single non-watch run:
+
+```bash
+npm test -- --watch=false
+```
+
+Run the environment generator tests separately with Node's built-in test runner:
+
+```bash
+node --test scripts/generate-environment.test.mjs
+```
+
+The generator tests use isolated temporary directories and dummy values. They
+verify missing/blank key handling and safe generation without changing your local
+environment file or logging a key.
+
+## Production Build
+
+```bash
+npm run build
+```
+
+This runs the optimized Angular production build using your existing local
+environment file. Browser assets are written to
 `dist/travel-places-tracker/browser`.
 
-Run this deployment command only in the deployment checkout: it replaces that
-checkout's environment file. Normal `npm start` and `npm run build` do not run the
-generator and continue using your existing local environment file.
+## Deployment
 
-The SPA rewrites serve `index.html` for `/places`, `/places/:id`, and `/wishlist`,
-so refreshing these routes works without rewriting static assets or API paths.
+In the Vercel project's Environment Variables, add `GEOAPIFY_API_KEY` with your own
+key for **Production**, and for **Preview** if preview deployments should support
+search.
 
-The key stays out of Git, but is embedded in the public browser bundle and visible
-in API requests. Configure Geoapify allowed origins/referrers for your deployment
-domains; a build-time variable does not make a browser API key a server-side secret.
+The build command is configured in `vercel.json`:
 
-## Geoapify search configuration
+```bash
+npm run vercel-build
+```
 
-Set `environment.geoapify.apiKey` in `src/environments/environment.ts` to your own key.
-The example's empty key allows builds after copying the file, but search requires a key.
-This file is used by both development and production builds. Browser API keys are
-visible in the built application; configure allowed origins/referrers in Geoapify.
+This runs `scripts/generate-environment.mjs` followed by `ng build`. The generator
+requires a nonblank `GEOAPIFY_API_KEY`, fails clearly when it is missing, and writes
+the ignored `src/environments/environment.ts` with the Geoapify base URL
+`https://api.geoapify.com`. It never logs the key.
+
+Run this command only in the deployment checkout: it replaces that checkout's
+environment file. Normal `npm start` and `npm run build` do not run the generator
+and leave your local configuration intact.
+
+Vercel serves `dist/travel-places-tracker/browser`. The SPA rewrites serve
+`index.html` for `/places`, `/places/:id`, and `/wishlist`, allowing direct visits
+and refreshes without rewriting static assets or API paths.
+
+**API-key security:** The key stays out of Git, but is embedded in the public
+browser bundle and visible in API requests. Configure Geoapify allowed
+origins/referrers for your local and deployment domains. A build-time environment
+variable does not make a client-side API key a server-side secret.
+
+## Notes
+
+### Data sources and local feedback
+
+Geoapify provides place discovery and details. Wikimedia/Wikidata is used only
+to enrich place images when available, with Wikipedia/Commons fallbacks. Photos
+and metadata depend on source availability; no fake public ratings, reviews, or
+photos are generated.
+
+Wishlist entries are stored in localStorage under `travel-places-wishlist`.
+Ratings and tips/reviews entered by the user are stored only in that browser
+under `travel-places-feedback`, associated with the application's stable `Place.id`.
+They are personal feedback, not public Geoapify reviews or ratings from Google,
+Tripadvisor, Wikimedia, or other users. There is no global or average rating.
+
+### Search behavior
 
 Search geocodes the submitted location and requests up to 20 named places within
 10 km of the first match, biased toward that location. Results are not exhaustive
-or ranked by popularity.
+or ranked by popularity. The request and UI share `PLACES_LIMIT` in
+`src/app/core/config/places.config.ts`.
 
-The request and UI share `PLACES_LIMIT` in `src/app/core/config/places.config.ts`.
-Resolved coordinates are cached for 10 minutes under `geocode:<location>`, using
-trimmed, lowercase location keys with repeated whitespace collapsed. Successful
-complete searches remain separately cached by location, category/name, and limit.
-Changing category in the same city reuses coordinates; repeating the entire search
-skips both API calls. Failed requests and unresolved locations are not cached.
-
-Keywords are trimmed and matched case-insensitively against this exact mapping.
-The listed plural forms are also supported:
+Keywords are trimmed and matched case-insensitively to these categories:
 
 | Keyword                  | Geoapify category                        |
 | ------------------------ | ---------------------------------------- |
@@ -81,84 +181,33 @@ The listed plural forms are also supported:
 | park / parks             | `leisure.park`                           |
 | attraction / attractions | `tourism.attraction`                     |
 
-The aliases `Christian church` and `Christian churches` use the same Christian
-places-of-worship category as `church`, including places not classified as tourist sights.
+`Christian church` and `Christian churches` use the same category as `church`,
+including places not classified as tourist sights.
 
 An empty keyword requests the union of `tourism.sights`, `tourism.attraction`,
-`entertainment.museum`, and `leisure.park`. Other keywords are sent through the
-documented `name` parameter within that same set of categories; name matching
-follows Geoapify's behavior, with no promised translation or fuzzy matching.
-The page explicitly labels category versus place-name searches and their scope.
+`entertainment.museum`, and `leisure.park`. Other keywords use Geoapify's `name`
+parameter within those categories; translation and fuzzy matching are not
+guaranteed. The UI distinguishes category searches from place-name searches.
+
 All searches use `conditions=named`, with a defensive blank-name check after
-normalization. There is no client-side keyword filtering that could reject
-localized names or miss matches beyond a generic first page.
+normalization. Category/name filtering happens at the API level before the result
+limit, not client-side over a limited generic result set.
 
-Request references: [Geocoding](https://apidocs.geoapify.com/docs/geocoding/)
-and [Places](https://apidocs.geoapify.com/docs/places/).
+API references: [Geocoding](https://apidocs.geoapify.com/docs/geocoding/) and
+[Places](https://apidocs.geoapify.com/docs/places/).
 
-## Data sources and local feedback
+### Caching and navigation
 
-Geoapify provides place search and details. Wikidata/Wikimedia and Wikipedia
-enrich details with real photos when available. Wishlist entries are stored
-locally under `travel-places-wishlist`.
+Resolved coordinates are cached in memory for 10 minutes under `geocode:<location>`
+using trimmed, lowercase location keys with repeated whitespace collapsed.
+Successful searches are cached separately by location, category/name, and result
+limit. Changing category in the same city reuses coordinates; repeating an entire
+search skips both API calls. Failed requests and unresolved locations are not cached.
 
-Ratings and tips/reviews are created by the current user and stored only in this
-browser under `travel-places-feedback`, associated with the stable application
-`Place.id`. They are not external ratings/reviews from Geoapify, Google,
-Tripadvisor, Wikimedia, or other users. There is no average or global rating.
+The keyword and location are preserved in URL query parameters. Returning from
+details restores the form and search, reusing cached results while available.
+Refreshing a search URL restores the search, but resets the in-memory cache.
 
-## Development server
+## Author
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+GitHub: [https://github.com/skattt12345](https://github.com/skattt12345)
